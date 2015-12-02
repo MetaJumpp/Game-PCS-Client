@@ -31,6 +31,7 @@ public class GameBoard extends BasicGameState {
     private Button yes;
     private Button no;
     private Image confirmMenu;
+    private Button endTheTurn;
 
     private boolean blueCure, yellowCure, blackCure, redCure;
     private Image blueCureImg, yellowCureImg, blackCureImg, redCureImg;
@@ -68,6 +69,9 @@ public class GameBoard extends BasicGameState {
 
         yes = new Button("yes", 455, 374, 30);
         no = new Button("no", 705, 374, 29);
+        endTheTurn = new Button("endturn",462, 302,32);
+        endTheTurn.init(gc);
+        endTheTurn.setActive(false);
 
         yes.init(gc);
         no.init(gc);
@@ -200,7 +204,7 @@ public class GameBoard extends BasicGameState {
         makeCure(gc);
 
         endTurn = actionMenu.getEndTurn();
-        if (endTurn && players.get(playerNo).getHandLength() > 7) {
+        if (endTurn && players.get(playerNo).getHandLength() > 7 ) {
             if (playerNo == 0)
                 showHand1 = true;
             else if (playerNo == 1)
@@ -212,8 +216,13 @@ public class GameBoard extends BasicGameState {
 
             players.get(playerNo).discardCards(gc);
         } else if(endTurn && players.get(playerNo).getHandLength() <= 7) {
-            System.out.println("SÅ SKAL DER TEGNES KNAP");
+            endTheTurn.setActive(true);
+            if (endTheTurn.clickWithin(gc)) {
+                System.out.println("TUREN ER FORBI!");
+            }
+
         }
+
 
         outOfTurns = players.get(playerNo).getOutOfTurns();
         actionMenu.setPlayerOutTurns(outOfTurns);
@@ -366,6 +375,10 @@ public class GameBoard extends BasicGameState {
             g.drawImage(blackCureImg, 117, 698);
         if (redCure)
             g.drawImage(redCureImg, 162, 697);
+
+        if (endTurn && players.get(playerNo).getHandLength() <= 7) {
+            endTheTurn.render(gc, g);
+        }
 
 
     }
