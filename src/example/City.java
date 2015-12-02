@@ -27,6 +27,9 @@ public class City extends BasicGame {
      * Button calls an instance of the button class, it is used to make the cities buttons that react to mouse click.
      */
 
+    private Message message;
+    private ServerCalls serverCalls;
+
     private String cityName;
     private int xPos;
     private int yPos;
@@ -115,6 +118,7 @@ public class City extends BasicGame {
 
     @Override
     public void update(GameContainer gc, int i) throws SlickException {
+        convertMessageArray();
     }
 
     @Override
@@ -146,44 +150,64 @@ public class City extends BasicGame {
     public void removeCube(List<Player> players, int playerNo) {
 
         if (playerOnLocation(players, playerNo)) {
+
+
             //IF YELLOW IS GREATEST
             if (cubeYellow > cubeBlack && cubeYellow > cubeBlue && cubeYellow > cubeRed) {
                 cubeYellow -= 1;
+                serverCalls.removeCube("yellow",cityName);
+                players.get(playerNo).turnsSpent();
+
             }
             //IF BLUE IS GREATEST
             else if (cubeBlue > cubeBlack && cubeYellow < cubeBlue && cubeBlue > cubeRed) {
                 cubeBlue -= 1;
+                serverCalls.removeCube("blue",cityName);
+                players.get(playerNo).turnsSpent();
             }
             //IF BLACK IS GREATEST
             else if (cubeYellow < cubeBlack && cubeBlack > cubeBlue && cubeBlack > cubeRed) {
                 cubeBlack -= 1;
+                serverCalls.removeCube("black",cityName);
+                players.get(playerNo).turnsSpent();
             }
             //IF RED IS GREATEST
             else if (cubeRed > cubeBlack && cubeRed > cubeBlue && cubeYellow < cubeRed) {
                 cubeRed -= 1;
+                serverCalls.removeCube("red",cityName);
+                players.get(playerNo).turnsSpent();
             } else {
 
                 //ELSE IF ANY CUBE IS ABOVE 0
                 if (cubeBlue > 0 || cubeBlack > 0 || cubeRed > 0 || cubeYellow > 0) {
+                    players.get(playerNo).turnsSpent();
                     //REMOVE THE CITY COLOR FIRST
                     if (color == 0 && cubeBlue > 0) {
                         cubeBlue -= 1;
+                        serverCalls.removeCube("blue",cityName);
                     } else if (color == 1 && cubeYellow > 0) {
                         cubeYellow -= 1;
+                        serverCalls.removeCube("yellow",cityName);
                     } else if (color == 2 && cubeBlack > 0) {
                         cubeBlack -= 0;
+                        serverCalls.removeCube("black",cityName);
                     } else if (color == 3 && cubeRed > 0) {
                         cubeRed -= 1;
+                        serverCalls.removeCube("red",cityName);
                     } else {
                         //OR ELSE JUST REMOVE THEM FROM BLUE TO RED
                         if (cubeBlue > 0) {
                             cubeBlue -= 1;
+                            serverCalls.removeCube("blue",cityName);
                         } else if (cubeYellow > 0) {
                             cubeYellow -= 1;
+                            serverCalls.removeCube("yellow",cityName);
                         } else if (cubeBlack > 0) {
                             cubeBlack -= 1;
+                            serverCalls.removeCube("black",cityName);
                         } else if (cubeRed > 0) {
                             cubeRed -= 1;
+                            serverCalls.removeCube("red",cityName);
                         }
                     }
                 } else {
@@ -199,7 +223,10 @@ public class City extends BasicGame {
     public void placeResearchStation(List<Player> players, int playerno) {
 
         if (playerOnLocation(players, playerno) && !hasResearchSt && noOfResearchStationsLeft > 0) {
+            players.get(playerno).turnsSpent();
+            serverCalls.placeResearchStation(cityName);
             hasResearchSt = true;
+
         }
 
     }
@@ -438,6 +465,26 @@ public class City extends BasicGame {
 
     public Cards getPlayerCards() {
         return playerCards;
+    }
+
+    public void setMessageInstance(Message message) {
+        this.message = message;
+    }
+
+    public void convertMessageArray() {
+        for (int i = 0; i < message.getCities()[0].length; i++) {
+            if (message.getCities()[0][i].equals(cityName)) {
+                cubeBlue = Integer.valueOf(message.getCities()[2][i]);
+                cubeYellow = Integer.valueOf(message.getCities()[3][i]);
+                cubeBlack = Integer.valueOf(message.getCities()[4][i]);
+                cubeRed = Integer.valueOf(message.getCities()[5][i]);
+                hasResearchSt = Boolean.valueOf(message.getCities()[1][i]);
+            }
+        }
+    }
+
+    public void setServerCalls(ServerCalls serverCalls) {
+        this.serverCalls = serverCalls;
     }
 
 }

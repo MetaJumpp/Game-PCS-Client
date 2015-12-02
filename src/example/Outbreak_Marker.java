@@ -7,6 +7,7 @@ import org.newdawn.slick.*;
  */
 public class Outbreak_Marker extends BasicGame {
 
+    Message message;
     private int outBreakcount;
     private int xPos = 301;
     private int yPos = 670;
@@ -25,7 +26,9 @@ public class Outbreak_Marker extends BasicGame {
 
     @Override
     public void update(GameContainer gameContainer, int i) throws SlickException {
-        xPos=301+outBreakcount*40;
+
+        outBreakcount = message.getOutbreakMarker();
+        xPos=302+outBreakcount*40;
     }
 
     @Override
@@ -33,6 +36,10 @@ public class Outbreak_Marker extends BasicGame {
 
         graphics.drawImage(ratemarker,xPos,yPos);
 
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
 }
