@@ -26,6 +26,7 @@ public class ActionMenu extends BasicGame {
     private boolean endTurn;
     int draw2Cards = 0;
 
+    ServerCalls serverCalls;
 
     private boolean playerOutTurns = false;
 
@@ -224,6 +225,7 @@ public class ActionMenu extends BasicGame {
         //SEND TIL SERVER
         if (draw2Cards < 2) {
             if (drawCard.clickWithin(gc) && playerOutTurns && !endTurn) {
+                serverCalls.drawCard();
                 System.out.println("CLIENT RULES, SERVER DROOLS!!!");
                 draw2Cards += 1;
             }
@@ -285,5 +287,13 @@ public class ActionMenu extends BasicGame {
     }
 
     public boolean getEndTurn() { return endTurn; }
+
+    public Button getDrawCardButton () {
+        return drawCard;
+    }
+
+    public void setServerCalls(ServerCalls serverCalls) {
+        this.serverCalls = serverCalls;
+    }
 }
 

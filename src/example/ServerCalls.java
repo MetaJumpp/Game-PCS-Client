@@ -80,6 +80,37 @@ public class ServerCalls extends Thread {
         out.flush();
     }
 
+
+    public void placeResearchStation(String city) {
+        out.println("PLACE_RESEARCH_CENTER@"+city);
+        out.flush();
+    }
+
+    public void drawCard() {
+        out.println("DRAW_CARD");
+        out.flush();
+    }
+
+    public void removeCube(String color, String city) {
+        out.println("REMOVE_CUBE@0"+color+"@"+city);
+        out.flush();
+    }
+
+    public void movePosition(String cityname, int playerNo) {
+        out.println("MOVE_POSITION@"+cityname+"@"+playerNo);
+        out.flush();
+    }
+
+    public void discardCard(String card, int playerNo) {
+        out.println("DISCARD_CARD@"+card+"@"+playerNo);
+        out.flush();
+    }
+
+    public void makeCure(String color) {
+        out.println("MAKE_CURE@"+color);
+        out.flush();
+    }
+
     public void run() {
 
         try {

@@ -6,17 +6,17 @@ import java.util.ArrayList;
 
 public class Message implements Serializable{
 
-    ArrayList<String> player1;
-    ArrayList<String> player2;
-    ArrayList<String> player3;
-    ArrayList<String> player4;
+    ArrayList<String> player1 = new ArrayList<String>();
+    ArrayList<String> player2 = new ArrayList<String>();
+    ArrayList<String> player3 = new ArrayList<String>();
+    ArrayList<String> player4 = new ArrayList<String>();
 
-    String[][] cities;
+    String[][] cities = new String[6][48];
 
-    ArrayList<String> playerDeck;
-    ArrayList<String> playerDiscard;
-    ArrayList<String> infectionDeck;
-    ArrayList<String> infectionDiscard;
+    ArrayList<String> playerDeck = new ArrayList<String>();
+    ArrayList<String> playerDiscard = new ArrayList<String>();
+    ArrayList<String> infectionDeck = new ArrayList<String>();
+    ArrayList<String> infectionDiscard = new ArrayList<String>();
 
     int blueCubesLeft;
     int redCubesLeft;
@@ -32,7 +32,7 @@ public class Message implements Serializable{
 
     Message()
     {
-
+    init(); //TEST SKAL SLETTES!!!!
     }
 
     //------------------------Getters----------------------------------------------
@@ -103,5 +103,44 @@ public class Message implements Serializable{
 
     public boolean isGameLost() {
         return gameLost;
+    }
+
+
+    //TEST SKAL FOR GUDS SKYLD SLETTES
+    public void init() {
+        player1.add(0,"0");
+        player1.add(1,"false");
+        player1.add(2,"chicago");
+        player1.add(3,"essen");
+        player1.add(4,"london");
+        player1.add(5,"riyadh");
+        player1.add(6,"milan");
+        player1.add(7,"paris");
+
+
+        player2.add(0,"1");
+        player2.add(1,"riyadh");
+        player2.add(2,"riyadh");
+        player2.add(3,"riyadh");
+
+
+        player3.add(0,"1");
+        player3.add(1,"kolkata");
+
+        player4.add(0,"1");
+        player4.add(1,"lima");
+
+        for (int i = 0; i < cities[0].length; i++) {
+            cities[0][i] = "stpetersburg";
+            cities[1][i] = "true";
+            cities[2][i] = "3";
+            cities[3][i] = "1";
+            cities[4][i] = "1";
+            cities[5][i] = "0";
+        }
+
+        outbreakMarker = 0;
+        infectionMarker = 0;
+
     }
 }

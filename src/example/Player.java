@@ -13,6 +13,9 @@ import java.util.List;
  */
 public class Player extends BasicGame {
 
+    Message message;
+    private ServerCalls serverCalls;
+
     private Image[] playerImage = new Image[7];
     private City currentLocation = new City("pandemic", "atlanta", 230, 300, new String[]{"miami", "washington", "chicago"}, 0);
     private Image curLocation;
@@ -33,6 +36,7 @@ public class Player extends BasicGame {
     private Roles role;
 
     private int playerID;
+    private int playerNo;
 
     private boolean playerReady;
 
@@ -68,9 +72,10 @@ public class Player extends BasicGame {
     @Override
     public void update(GameContainer gc, int i) throws SlickException {
 
+
         role.update(gc, i);
 
-        for (int j = 0; j < playerCards.length; j++ ) {
+        for (int j = 0; j < playerCards.length; j++) {
             playerCards[j].update(gc, i);
         }
 
@@ -103,6 +108,50 @@ public class Player extends BasicGame {
             return false;
     }
 
+    public void updateHands(int playerNo) {
+        if (playerNo == 0) {
+            for (int j = 2; j < message.getPlayer1().size(); j++) {
+                for (int k = 0; k < playerCards.length; k++) {
+                    if (playerCards[k].getCityName().equals(message.getPlayer1().get(j))) {
+                        if (!hand.contains(playerCards[k])) {
+                            hand.add(j - 2, playerCards[k]);
+                        }
+                    }
+                }
+            }
+        } else if (playerNo == 1) {
+            for (int j = 2; j < message.getPlayer2().size(); j++) {
+                for (int k = 0; k < playerCards.length; k++) {
+                    if (playerCards[k].getCityName().equals(message.getPlayer2().get(j))) {
+                        if (!hand.contains(playerCards[k])) {
+                            hand.add(j - 2, playerCards[k]);
+                        }
+                    }
+                }
+            }
+        } else if (playerNo == 2) {
+            for (int j = 2; j < message.getPlayer3().size(); j++) {
+                for (int k = 0; k < playerCards.length; k++) {
+                    if (playerCards[k].getCityName().equals(message.getPlayer3().get(j))) {
+                        if (!hand.contains(playerCards[k])) {
+                            hand.add(j - 2, playerCards[k]);
+                        }
+                    }
+                }
+            }
+        } else if (playerNo == 3) {
+            for (int j = 2; j < message.getPlayer4().size(); j++) {
+                for (int k = 0; k < playerCards.length; k++) {
+                    if (playerCards[k].getCityName().equals(message.getPlayer4().get(j))) {
+                        if (!hand.contains(playerCards[k])) {
+                            hand.add(j - 2, playerCards[k]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * GETTER and SETTER Methods
      */
@@ -120,12 +169,16 @@ public class Player extends BasicGame {
         //IF YOU ARE NEXT TO A CITY OR ON A CITY WITH A RESEARCH STATION
         if (checkMovability(city)) {
             this.currentLocation = city;
+            serverCalls.movePosition(city.getCityName(),playerNo);
+            turnsSpent();
         }
         //ONLY IN THE INSTANCE WHERE YOU USE A CARD FOR TRAVEL!
         else if (convertHandToStringList().contains(city.getCityName()) && !checkMovability(city)) {
             this.currentLocation = city;
+            serverCalls.movePosition(city.getCityName(),playerNo);
             hand.remove(city.getPlayerCards());
-
+            serverCalls.discardCard(city.getCityName(),playerNo);
+            turnsSpent();
         }
     }
 
@@ -309,13 +362,13 @@ public class Player extends BasicGame {
             outOfTurns = true;
     }
 
-    public void discardCards(GameContainer gc){
+    public void discardCards(GameContainer gc) {
 
-        if(hand.size() > 7){
+        if (hand.size() > 7) {
 
-            for(int i = 0; i < hand.size(); i++){
+            for (int i = 0; i < hand.size(); i++) {
 
-                if(hand.get(i).clickWithin(gc)){
+                if (hand.get(i).clickWithin(gc)) {
 
                     hand.remove(i);
                 }
@@ -339,10 +392,26 @@ public class Player extends BasicGame {
         this.turnsLeft = turnsLeft;
     }
 
-    public void removeExtraCards (GameContainer gc) {
+    public void removeExtraCards(GameContainer gc) {
     }
 
-    public int getHandLength () {
+    public int getHandLength() {
         return hand.size();
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
+
+    public void setLocationOfOthers(City city) {
+        this.currentLocation = city;
+    }
+
+    public void setServerCalls(ServerCalls serverCalls) {
+        this.serverCalls = serverCalls;
+    }
+
+    public void setPlayerNo (int playerNo) {
+        this.playerNo = playerNo;
     }
 }
