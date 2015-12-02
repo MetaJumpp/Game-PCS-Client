@@ -223,7 +223,7 @@ public class ActionMenu extends BasicGame {
 
         //SEND TIL SERVER
         if (draw2Cards < 2) {
-            if (drawCard.clickWithin(gc)) {
+            if (drawCard.clickWithin(gc) && playerOutTurns && !endTurn) {
                 System.out.println("CLIENT RULES, SERVER DROOLS!!!");
                 draw2Cards += 1;
             }
