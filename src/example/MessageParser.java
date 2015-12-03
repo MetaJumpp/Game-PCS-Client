@@ -134,23 +134,28 @@ public class MessageParser {
 
     public void updateValues() {
 
-        if (instanceOfMessage.getPlayer1() != null) {
-            player1 = instanceOfMessage.getPlayer1();
+        try {
+            if (instanceOfMessage.getPlayer1() != null && !instanceOfMessage.getPlayer1().isEmpty()) {
+                player1 = instanceOfMessage.getPlayer1();
+            }
+            if (instanceOfMessage.getPlayer2() != null && !instanceOfMessage.getPlayer2().isEmpty()) {
+                player2 = instanceOfMessage.getPlayer1();
+            }
+            if (instanceOfMessage.getPlayer3() != null && !instanceOfMessage.getPlayer3().isEmpty()) {
+                player3 = instanceOfMessage.getPlayer1();
+            }
+            if (instanceOfMessage.getPlayer4() != null && !instanceOfMessage.getPlayer3().isEmpty()) {
+                player1 = instanceOfMessage.getPlayer1();
+            }
+            if (instanceOfMessage.getCities() != null && !instanceOfMessage.getPlayer1().isEmpty()) {
+                cities = getCities();
+            }
+            if (instanceOfMessage.getCities() != null && instanceOfMessage.getCities().length>0)
+            outbreakMarker = instanceOfMessage.outbreakMarker;
+            infectionMarker = instanceOfMessage.infectionMarker;
+        } catch (NullPointerException nox) {
+            nox.printStackTrace();
         }
-        if (instanceOfMessage.getPlayer2() != null) {
-            player2 = instanceOfMessage.getPlayer1();
-        }
-        if (instanceOfMessage.getPlayer3() != null) {
-            player3 = instanceOfMessage.getPlayer1();
-        }
-        if (instanceOfMessage.getPlayer4() != null) {
-            player1 = instanceOfMessage.getPlayer1();
-        }
-        if (instanceOfMessage.getCities() != null) {
-            cities = getCities();
-        }
-        outbreakMarker = instanceOfMessage.outbreakMarker;
-        infectionMarker = instanceOfMessage.infectionMarker;
     }
 
 

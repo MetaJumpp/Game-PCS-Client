@@ -20,10 +20,10 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class GameClient extends StateBasedGame {
 
-    //private static final String HOST = "localhost";
-    private static final String HOST = "192.168.1.100";
-    //private static final int PORT = 1234;
-    private static final int PORT = 2555;
+    private static final String HOST = "localhost";
+    //private static final String HOST = "192.168.1.100";
+    private static final int PORT = 1234;
+    //private static final int PORT = 2555;
     public static Socket socket;
     public static PrintWriter out;
 
@@ -57,8 +57,8 @@ public class GameClient extends StateBasedGame {
         serverCalls.start();
 
 
-        this.addState(new InputNameScreen(gsc));
-        this.addState(new Lobby(gsc, serverCalls,players));
+        //this.addState(new InputNameScreen(gsc));
+        //this.addState(new Lobby(gsc, serverCalls,players));
         this.addState(new GameBoard(gsc, serverCalls, players, message));
 
     }

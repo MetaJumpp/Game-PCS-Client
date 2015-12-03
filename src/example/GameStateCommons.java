@@ -14,7 +14,7 @@ public class GameStateCommons {
 
     public GameStateCommons(List<Player> players) {
 
-        playerNo = 0;
+        playerNo = 1;
         this.players = players;
 
     }

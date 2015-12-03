@@ -320,7 +320,7 @@ public class GameBoard extends BasicGameState {
         //DISPLAY THE LOCATION OF THE OTHER PLAYERS WITH A LITTLE BLUE FLAG
         if (playerNo != 0) {
             for (int i = 0; i < cities.length; i++) {
-                if (message.getPlayer1().get(1).equals(cities[i].getCityName())) {
+                if (message.getPlayer1() != null && !message.getPlayer1().isEmpty() && message.getPlayer1().get(1).equals(cities[i].getCityName())) {
                     players.get(0).setLocationOfOthers(cities[i]);
                 }
             }
