@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fefe0807-27f8-4f60-946c-30d09e3d3b9b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Game-PCS-Client/example/GameStateCommons.class" afterPath="$PROJECT_DIR$/out/production/Game-PCS-Client/example/GameStateCommons.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/example/GameClient.java" afterPath="$PROJECT_DIR$/src/example/GameClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -30,8 +29,8 @@
       <file leaf-file-name="GameClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/example/GameClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7129032">
-              <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.78064513">
+              <caret line="60" column="8" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -142,7 +141,7 @@
     <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <push-targets>
-      <push-target-info repo="$PROJECT_DIR$" source="master" target-remote="origin" target-branch="FUBARV2" />
+      <push-target-info repo="$PROJECT_DIR$" source="master" target-remote="origin" target-branch="FUBARV3" />
     </push-targets>
   </component>
   <component name="GradleLocalSettings">
@@ -599,7 +598,7 @@
       <workItem from="1449058807452" duration="1088000" />
       <workItem from="1449060866997" duration="58000" />
       <workItem from="1449060954125" duration="30454000" />
-      <workItem from="1449135065393" duration="23429000" />
+      <workItem from="1449135065393" duration="23507000" />
     </task>
     <task id="LOCAL-00001" summary="merged goodness">
       <created>1448366138550</created>
@@ -703,11 +702,17 @@
       <option name="project" value="LOCAL" />
       <updated>1449162993514</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Nu catcher den i det mindste nullpointer exceptions">
+      <created>1449163139300</created>
+      <option name="number" value="00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1449163139300</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="204287000" />
+    <option name="totallyTimeSpent" value="204365000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="0" width="1378" height="744" extended-state="0" />
@@ -1171,8 +1176,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/example/GameClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7129032">
-          <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+        <state vertical-scroll-proportion="0.78064513">
+          <caret line="60" column="8" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="8" />
           <folding />
         </state>
       </provider>

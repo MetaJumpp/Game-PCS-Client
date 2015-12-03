@@ -57,8 +57,8 @@ public class GameClient extends StateBasedGame {
         serverCalls.start();
 
 
-        //this.addState(new InputNameScreen(gsc));
-        //this.addState(new Lobby(gsc, serverCalls,players));
+        this.addState(new InputNameScreen(gsc));
+        this.addState(new Lobby(gsc, serverCalls,players));
         this.addState(new GameBoard(gsc, serverCalls, players, message));
 
     }
