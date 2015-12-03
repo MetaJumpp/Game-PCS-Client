@@ -27,7 +27,7 @@ public class City extends BasicGame {
      * Button calls an instance of the button class, it is used to make the cities buttons that react to mouse click.
      */
 
-    private Message message;
+    private MessageParser message;
     private ServerCalls serverCalls;
 
     private String cityName;
@@ -155,26 +155,26 @@ public class City extends BasicGame {
             //IF YELLOW IS GREATEST
             if (cubeYellow > cubeBlack && cubeYellow > cubeBlue && cubeYellow > cubeRed) {
                 cubeYellow -= 1;
-                serverCalls.removeCube("yellow",cityName);
+                serverCalls.removeCube("yellow");
                 players.get(playerNo).turnsSpent();
 
             }
             //IF BLUE IS GREATEST
             else if (cubeBlue > cubeBlack && cubeYellow < cubeBlue && cubeBlue > cubeRed) {
                 cubeBlue -= 1;
-                serverCalls.removeCube("blue",cityName);
+                serverCalls.removeCube("blue");
                 players.get(playerNo).turnsSpent();
             }
             //IF BLACK IS GREATEST
             else if (cubeYellow < cubeBlack && cubeBlack > cubeBlue && cubeBlack > cubeRed) {
                 cubeBlack -= 1;
-                serverCalls.removeCube("black",cityName);
+                serverCalls.removeCube("black");
                 players.get(playerNo).turnsSpent();
             }
             //IF RED IS GREATEST
             else if (cubeRed > cubeBlack && cubeRed > cubeBlue && cubeYellow < cubeRed) {
                 cubeRed -= 1;
-                serverCalls.removeCube("red",cityName);
+                serverCalls.removeCube("red");
                 players.get(playerNo).turnsSpent();
             } else {
 
@@ -184,30 +184,30 @@ public class City extends BasicGame {
                     //REMOVE THE CITY COLOR FIRST
                     if (color == 0 && cubeBlue > 0) {
                         cubeBlue -= 1;
-                        serverCalls.removeCube("blue",cityName);
+                        serverCalls.removeCube("blue");
                     } else if (color == 1 && cubeYellow > 0) {
                         cubeYellow -= 1;
-                        serverCalls.removeCube("yellow",cityName);
+                        serverCalls.removeCube("yellow");
                     } else if (color == 2 && cubeBlack > 0) {
                         cubeBlack -= 0;
-                        serverCalls.removeCube("black",cityName);
+                        serverCalls.removeCube("black");
                     } else if (color == 3 && cubeRed > 0) {
                         cubeRed -= 1;
-                        serverCalls.removeCube("red",cityName);
+                        serverCalls.removeCube("red");
                     } else {
                         //OR ELSE JUST REMOVE THEM FROM BLUE TO RED
                         if (cubeBlue > 0) {
                             cubeBlue -= 1;
-                            serverCalls.removeCube("blue",cityName);
+                            serverCalls.removeCube("blue");
                         } else if (cubeYellow > 0) {
                             cubeYellow -= 1;
-                            serverCalls.removeCube("yellow",cityName);
+                            serverCalls.removeCube("yellow");
                         } else if (cubeBlack > 0) {
                             cubeBlack -= 1;
-                            serverCalls.removeCube("black",cityName);
+                            serverCalls.removeCube("black");
                         } else if (cubeRed > 0) {
                             cubeRed -= 1;
-                            serverCalls.removeCube("red",cityName);
+                            serverCalls.removeCube("red");
                         }
                     }
                 } else {
@@ -224,7 +224,7 @@ public class City extends BasicGame {
 
         if (playerOnLocation(players, playerno) && !hasResearchSt && noOfResearchStationsLeft > 0) {
             players.get(playerno).turnsSpent();
-            serverCalls.placeResearchStation(cityName);
+            serverCalls.placeResearchStation();
             hasResearchSt = true;
 
         }
@@ -467,7 +467,7 @@ public class City extends BasicGame {
         return playerCards;
     }
 
-    public void setMessageInstance(Message message) {
+    public void setMessageInstance(MessageParser message) {
         this.message = message;
     }
 

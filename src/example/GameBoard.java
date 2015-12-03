@@ -7,6 +7,9 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +21,11 @@ public class GameBoard extends BasicGameState {
     /**
      * Declaring variables.
      */
+
+    // private static Socket socket = GameClient.socket;
+
     private GameStateCommons gsc;
-    private Message message;
+    private MessageParser message;
     private ServerCalls serverCalls;
     private City[] cities;
     private Infection_Marker infectionMarker;
@@ -43,7 +49,9 @@ public class GameBoard extends BasicGameState {
     private boolean showHand1, showHand2, showHand3, showHand4;
     private boolean blueCure, yellowCure, blackCure, redCure;
     private boolean outOfTurns;
+    private boolean discardPhase;
     private boolean endTurn;
+    private boolean waiting;
     private boolean isItMyTurn;
 
 
@@ -55,17 +63,17 @@ public class GameBoard extends BasicGameState {
     private List<Player> players;
 
 
-    public GameBoard(GameStateCommons gsc, ServerCalls serverCalls, List<Player> players) {
+    public GameBoard(GameStateCommons gsc, ServerCalls serverCalls, List<Player> players, MessageParser message) {
         this.gsc = gsc;
         this.serverCalls = serverCalls;
         this.players = players;
+        this.message = message;
     }
 
 
     @Override
     public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 
-        message = new Message();
 
         for (int i = 0; i < players.size(); i++) {
             players.get(i).setMessage(message);
@@ -91,9 +99,8 @@ public class GameBoard extends BasicGameState {
 
         yes = new Button("yes", 455, 374, 30);
         no = new Button("no", 705, 374, 29);
-        endTheTurn = new Button("endturn", 462, 302, 32);
+        endTheTurn = new Button("endturn", 775, 94, 32);
         endTheTurn.init(gc);
-        endTheTurn.setActive(false);
 
         yes.init(gc);
         no.init(gc);
@@ -198,51 +205,61 @@ public class GameBoard extends BasicGameState {
             cities[j].update(gc, i);
         }
 
+        isItMyTurn(playerNo);
+
+        message.updateValues();
+
+
         updateLibrary();
-        moveAction();
-        move(gc);
-        removeCubeAction();
-        removeCube(gc);
-        placeResearchStationAction();
-        placeResearchStation(gc);
-        makeCure(gc);
+        if (isItMyTurn) {
 
-        if (endTurn && actionMenu.getDrawCardButton().clickWithin(gc)) {
-            players.get(0).updateHands(0);
-            players.get(1).updateHands(1);
-            players.get(2).updateHands(2);
-            players.get(3).updateHands(3);
-        }
+            moveAction();
+            move(gc);
+            removeCubeAction();
+            removeCube(gc);
+            placeResearchStationAction();
+            placeResearchStation(gc);
+            makeCure(gc);
 
-        endTurn = actionMenu.getEndTurn();
-        if (endTurn && players.get(playerNo).getHandLength() > 7) {
-            if (playerNo == 0)
-                showHand1 = true;
-            else if (playerNo == 1)
-                showHand2 = true;
-            else if (playerNo == 2)
-                showHand3 = true;
-            else
-                showHand4 = true;
+            infectionMarker.update(gc, i);
+            outbreakMarker.update(gc, i);
+            actionMenu.update(gc, i);
 
-            players.get(playerNo).discardCards(gc);
+            outOfTurns = players.get(playerNo).getOutOfTurns();
+            actionMenu.setPlayerOutTurns(outOfTurns);
+            discardPhase = actionMenu.getDiscardPhase();
 
-        } else if (endTurn && players.get(playerNo).getHandLength() <= 7) {
-            endTheTurn.setActive(true);
-            if (endTheTurn.clickWithin(gc)) {
-                System.out.println("TUREN ER FORBI!");
+            if (outOfTurns && actionMenu.getDrawCardButton().clickWithin(gc) && !discardPhase && !endTurn) {
+                actionMenu.drawCard();
+                players.get(0).updateHands(0);
+                players.get(1).updateHands(1);
+                players.get(2).updateHands(2);
+                players.get(3).updateHands(3);
+
+                if (playerNo == 0)
+                    showHand1 = true;
+                else if (playerNo == 1)
+                    showHand2 = true;
+                else if (playerNo == 2)
+                    showHand3 = true;
+                else
+                    showHand4 = true;
             }
 
+            if (discardPhase) {
+                if (outOfTurns && players.get(playerNo).getHandLength() > 7 && !endTurn) {
+                    players.get(playerNo).discardCards(gc);
+                }
+                if (outOfTurns && players.get(playerNo).getHandLength() <= 7 && !endTurn) {
+                    endTurn = true;
+                    actionMenu.setEndTurn(true);
+                    discardPhase = false;
+                    actionMenu.setDiscardPhase(false);
+                }
+            }
         }
+        endTurn = actionMenu.getEndTurn();
 
-
-        outOfTurns = players.get(playerNo).getOutOfTurns();
-        actionMenu.setPlayerOutTurns(outOfTurns);
-
-
-        infectionMarker.update(gc, i);
-        outbreakMarker.update(gc, i);
-        actionMenu.update(gc, i);
 
         if (player1Hand.clickWithin(gc)) {
             showHand1 = !showHand1;
@@ -311,7 +328,7 @@ public class GameBoard extends BasicGameState {
         }
         if (playerNo != 1) {
             for (int i = 0; i < cities.length; i++) {
-                if (message.getPlayer2().get(1).equals(cities[i].getCityName())) {
+                if (message.getPlayer2() != null && !message.getPlayer2().isEmpty() && message.getPlayer2().get(2).equals(cities[i].getCityName())) {
                     players.get(1).setLocationOfOthers(cities[i]);
                 }
             }
@@ -319,7 +336,7 @@ public class GameBoard extends BasicGameState {
         }
         if (playerNo != 2) {
             for (int i = 0; i < cities.length; i++) {
-                if (message.getPlayer3().get(1).equals(cities[i].getCityName())) {
+                if (message.getPlayer3() != null && !message.getPlayer3().isEmpty() && message.getPlayer3().get(2).equals(cities[i].getCityName())) {
                     players.get(2).setLocationOfOthers(cities[i]);
                 }
             }
@@ -327,7 +344,7 @@ public class GameBoard extends BasicGameState {
         }
         if (playerNo != 3) {
             for (int i = 0; i < cities.length; i++) {
-                if (message.getPlayer4().get(1).equals(cities[i].getCityName())) {
+                if (message.getPlayer4() != null && !message.getPlayer4().isEmpty() && message.getPlayer4().get(2).equals(cities[i].getCityName())) {
                     players.get(3).setLocationOfOthers(cities[i]);
                 }
             }
@@ -412,8 +429,21 @@ public class GameBoard extends BasicGameState {
         if (redCure)
             g.drawImage(redCureImg, 162, 697);
 
-        if (endTurn && players.get(playerNo).getHandLength() <= 7) {
+
+        if (endTurn && !waiting) {
             endTheTurn.render(gc, g);
+            if (gc.getInput().isMousePressed(0)) {
+                System.out.println("TUREN ER FORBI!");
+                waiting = true;
+            }
+        }
+
+        if (!isItMyTurn) {
+            g.drawImage(waitingForTurn, 960, 94);
+        }
+
+
+                    /*
             if (endTheTurn.clickWithin(gc)) {
                 if (playerNo == 0)
                     isItMyTurn = Boolean.valueOf(message.getPlayer1().get(1));
@@ -423,16 +453,8 @@ public class GameBoard extends BasicGameState {
                     isItMyTurn = Boolean.valueOf(message.getPlayer3().get(1));
                 else if (playerNo == 3)
                     isItMyTurn = Boolean.valueOf(message.getPlayer4().get(1));
-            }
-
-
-        }
-
-        if (endTurn && !isItMyTurn) {
-            g.drawImage(waitingForTurn, 960, 94);
-        }
-
-        }
+            }*/
+    }
 
     public void updateLibrary() {
 
@@ -527,6 +549,7 @@ public class GameBoard extends BasicGameState {
 
     public void makeCure(GameContainer gc) {
         boolean makeCure = actionMenu.getIsCureActive();
+        List<Cards> tmpList = players.get(playerNo).returnCardsDiscardedAsString();
 
         for (int i = 0; i < cities.length; i++) {
             if (makeCure && yes.clickWithin(gc)) {
@@ -540,25 +563,29 @@ public class GameBoard extends BasicGameState {
                 if (players.get(playerNo).countCardsForDisease().equals("cureblue")) {
                     players.get(playerNo).removeCardsForTheCure();
                     players.get(playerNo).turnsSpent();
-                    serverCalls.makeCure("blue");
+                    serverCalls.makeCure("blue", tmpList.get(0).getCityName(), tmpList.get(1).getCityName(), tmpList.get(2).getCityName(), tmpList.get(3).getCityName(), tmpList.get(4).getCityName());
+                    players.get(playerNo).clearRemovables();
                     blueCure = true;
                 }
                 if (players.get(playerNo).countCardsForDisease().equals("cureyellow")) {
                     players.get(playerNo).removeCardsForTheCure();
                     players.get(playerNo).turnsSpent();
-                    serverCalls.makeCure("yellow");
+                    serverCalls.makeCure("yellow", tmpList.get(0).getCityName(), tmpList.get(1).getCityName(), tmpList.get(2).getCityName(), tmpList.get(3).getCityName(), tmpList.get(4).getCityName());
+                    players.get(playerNo).clearRemovables();
                     yellowCure = true;
                 }
                 if (players.get(playerNo).countCardsForDisease().equals("cureblack")) {
                     players.get(playerNo).removeCardsForTheCure();
                     players.get(playerNo).turnsSpent();
-                    serverCalls.makeCure("black");
+                    serverCalls.makeCure("black", tmpList.get(0).getCityName(), tmpList.get(1).getCityName(), tmpList.get(2).getCityName(), tmpList.get(3).getCityName(), tmpList.get(4).getCityName());
+                    players.get(playerNo).clearRemovables();
                     blackCure = true;
                 }
                 if (players.get(playerNo).countCardsForDisease().equals("curered")) {
                     players.get(playerNo).removeCardsForTheCure();
                     players.get(playerNo).turnsSpent();
-                    serverCalls.makeCure("red");
+                    serverCalls.makeCure("red", tmpList.get(0).getCityName(), tmpList.get(1).getCityName(), tmpList.get(2).getCityName(), tmpList.get(3).getCityName(), tmpList.get(4).getCityName());
+                    players.get(playerNo).clearRemovables();
                     redCure = true;
                 }
             } else {
@@ -573,6 +600,18 @@ public class GameBoard extends BasicGameState {
                 actionMenu.setResearchSActive(false);
             }
         }
+    }
+
+    public void isItMyTurn(int playerNo) {
+
+        if (playerNo == 0 && message.getPlayer1() != null && !message.getPlayer1().isEmpty())
+            isItMyTurn = Boolean.valueOf(message.getPlayer1().get(1));
+        else if (playerNo == 2 && message.getPlayer2() != null && !message.getPlayer2().isEmpty())
+            isItMyTurn = Boolean.valueOf(message.getPlayer2().get(1));
+        else if (playerNo == 3 && message.getPlayer3() != null && !message.getPlayer3().isEmpty())
+            isItMyTurn = Boolean.valueOf(message.getPlayer3().get(1));
+        else if (playerNo == 4 && message.getPlayer4() != null && !message.getPlayer4().isEmpty())
+            isItMyTurn = Boolean.valueOf(message.getPlayer4().get(1));
     }
 
     @Override

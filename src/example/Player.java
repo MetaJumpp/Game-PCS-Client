@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Player extends BasicGame {
 
-    Message message;
+    MessageParser message;
     private ServerCalls serverCalls;
 
     private Image[] playerImage = new Image[7];
@@ -24,6 +24,7 @@ public class Player extends BasicGame {
     private Image playerTurnsLeft;
 
     private List<Cards> hand = new ArrayList<Cards>(0);
+    private List<Cards> removableCards = new ArrayList<Cards>();
     private Cards[] playerCards;
 
     private int xPos;
@@ -114,7 +115,7 @@ public class Player extends BasicGame {
                 for (int k = 0; k < playerCards.length; k++) {
                     if (playerCards[k].getCityName().equals(message.getPlayer1().get(j))) {
                         if (!hand.contains(playerCards[k])) {
-                            hand.add(j - 2, playerCards[k]);
+                            hand.add(playerCards[k]);
                         }
                     }
                 }
@@ -124,7 +125,7 @@ public class Player extends BasicGame {
                 for (int k = 0; k < playerCards.length; k++) {
                     if (playerCards[k].getCityName().equals(message.getPlayer2().get(j))) {
                         if (!hand.contains(playerCards[k])) {
-                            hand.add(j - 2, playerCards[k]);
+                            hand.add(playerCards[k]);
                         }
                     }
                 }
@@ -134,7 +135,7 @@ public class Player extends BasicGame {
                 for (int k = 0; k < playerCards.length; k++) {
                     if (playerCards[k].getCityName().equals(message.getPlayer3().get(j))) {
                         if (!hand.contains(playerCards[k])) {
-                            hand.add(j - 2, playerCards[k]);
+                            hand.add(playerCards[k]);
                         }
                     }
                 }
@@ -144,7 +145,7 @@ public class Player extends BasicGame {
                 for (int k = 0; k < playerCards.length; k++) {
                     if (playerCards[k].getCityName().equals(message.getPlayer4().get(j))) {
                         if (!hand.contains(playerCards[k])) {
-                            hand.add(j - 2, playerCards[k]);
+                            hand.add(playerCards[k]);
                         }
                     }
                 }
@@ -169,15 +170,14 @@ public class Player extends BasicGame {
         //IF YOU ARE NEXT TO A CITY OR ON A CITY WITH A RESEARCH STATION
         if (checkMovability(city)) {
             this.currentLocation = city;
-            serverCalls.movePosition(city.getCityName(),playerNo);
+            serverCalls.movePosition(city.getCityName());
             turnsSpent();
         }
         //ONLY IN THE INSTANCE WHERE YOU USE A CARD FOR TRAVEL!
         else if (convertHandToStringList().contains(city.getCityName()) && !checkMovability(city)) {
             this.currentLocation = city;
-            serverCalls.movePosition(city.getCityName(),playerNo);
+            serverCalls.moveByCard(city.getCityName());
             hand.remove(city.getPlayerCards());
-            serverCalls.discardCard(city.getCityName(),playerNo);
             turnsSpent();
         }
     }
@@ -315,8 +315,20 @@ public class Player extends BasicGame {
                 }
             }
         }
-
+        setRemovableCards(removables);
         hand.removeAll(removables);
+    }
+
+    public void setRemovableCards(List<Cards> cards) {
+        this.removableCards = cards;
+    }
+
+    public List<Cards> returnCardsDiscardedAsString () {
+        return removableCards;
+    }
+
+    public void clearRemovables () {
+        removableCards.clear();
     }
 
     public String countCardsForDisease() {
@@ -399,7 +411,7 @@ public class Player extends BasicGame {
         return hand.size();
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(MessageParser message) {
         this.message = message;
     }
 

@@ -7,7 +7,7 @@ import org.newdawn.slick.*;
  */
 public class Outbreak_Marker extends BasicGame {
 
-    Message message;
+    MessageParser message;
     private int outBreakcount;
     private int xPos = 301;
     private int yPos = 670;
@@ -38,7 +38,7 @@ public class Outbreak_Marker extends BasicGame {
 
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(MessageParser message) {
         this.message = message;
     }
 

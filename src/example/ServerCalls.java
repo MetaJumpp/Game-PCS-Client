@@ -13,15 +13,20 @@ import java.util.List;
 public class ServerCalls extends Thread {
 
     GameStateCommons gsc;
+    MessageParser message;
     private static Socket socket = GameClient.socket;
     private static PrintWriter out = GameClient.out;
+    //public static ObjectInputStream objectInputStream;
 
-    public ServerCalls(GameStateCommons gsc) {
+
+    public ServerCalls(GameStateCommons gsc, MessageParser message) {
         this.gsc = gsc;
+        this.message = message;
     }
 
     /**
      * Assign the player with an ID so that we always can find his position within an ArrayList of Players
+     *
      * @throws IOException
      */
 
@@ -51,6 +56,7 @@ public class ServerCalls extends Thread {
         boolean curPlayStatus;
         curPlayStatus = playerList.get(playerIdNo).getPlayerReady();
         out.println("SET_PLAYER_STATUS@" + curPlayStatus + "@" + playerIdNo);
+        System.out.println(out);
         out.flush();
     }
 
@@ -81,8 +87,8 @@ public class ServerCalls extends Thread {
     }
 
 
-    public void placeResearchStation(String city) {
-        out.println("PLACE_RESEARCH_CENTER@"+city);
+    public void placeResearchStation() {
+        out.println("BUILD");
         out.flush();
     }
 
@@ -91,23 +97,33 @@ public class ServerCalls extends Thread {
         out.flush();
     }
 
-    public void removeCube(String color, String city) {
-        out.println("REMOVE_CUBE@0"+color+"@"+city);
+    public void removeCube(String color) {
+        out.println("TREAT_DISEASE@" + color);
         out.flush();
     }
 
-    public void movePosition(String cityname, int playerNo) {
-        out.println("MOVE_POSITION@"+cityname+"@"+playerNo);
+    public void movePosition(String cityname) {
+        out.println("MOVE@" + cityname);
         out.flush();
     }
 
-    public void discardCard(String card, int playerNo) {
-        out.println("DISCARD_CARD@"+card+"@"+playerNo);
+    public void moveByResearchCenter(String cityName) {
+        out.println("MOVE_BETWEEN_RESEARCH@" + cityName);
         out.flush();
     }
 
-    public void makeCure(String color) {
-        out.println("MAKE_CURE@"+color);
+    public void moveByCard(String cityName) {
+        out.println("MOVE_FROM_CITYCARD@" + cityName);
+        out.flush();
+    }
+
+    public void discardCard(String card) {
+        out.println("DISCARD_CARD@" + card);
+        out.flush();
+    }
+
+    public void makeCure(String color, String card1, String card2, String card3, String card4, String card5) {
+        out.println("CREATE_CURE@" + color + "@" + card1 + "@" + card2 + "@" + card3 + "@" + card4 + "@" + card5);
         out.flush();
     }
 
@@ -116,17 +132,30 @@ public class ServerCalls extends Thread {
         try {
             boolean running = true;
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            while (running) {
-                String serverCommands;
+            //objectInputStream = new ObjectInputStream(socket.getInputStream());
 
+            while (running) {
+
+
+                String serverCommands;
                 serverCommands = in.readLine();
+
+                /*
+                try {
+                    Message messageClass = (Message) objectInputStream.readObject();
+                } catch (ClassNotFoundException clNF) {
+                    clNF.printStackTrace();
+                }*/
 
                 if (serverCommands.equals("quit")) {
                     running = false;
                     System.out.println("QUITTER");
                 }
 
-                if (       serverCommands.equals("GET_PLAYER_ID@0")
+                //while (lobby) {
+
+
+                if (serverCommands.equals("GET_PLAYER_ID@0")
                         || serverCommands.equals("GET_PLAYER_ID@1")
                         || serverCommands.equals("GET_PLAYER_ID@2")
                         || serverCommands.equals("GET_PLAYER_ID@3")) {
@@ -136,7 +165,7 @@ public class ServerCalls extends Thread {
                     gsc.setPlayerNo(tmpInt);
                 }
 
-                if (       serverCommands.equals("GET_PLAYER_ROLE@0@0")
+                if (serverCommands.equals("GET_PLAYER_ROLE@0@0")
                         || serverCommands.equals("GET_PLAYER_ROLE@0@1")
                         || serverCommands.equals("GET_PLAYER_ROLE@0@2")
                         || serverCommands.equals("GET_PLAYER_ROLE@0@3")
@@ -172,7 +201,7 @@ public class ServerCalls extends Thread {
                 }
 
 
-                if (       serverCommands.equals("GET_PLAYER_STATUS@true@0")
+                if (serverCommands.equals("GET_PLAYER_STATUS@true@0")
                         || serverCommands.equals("GET_PLAYER_STATUS@false@0")
                         || serverCommands.equals("GET_PLAYER_STATUS@true@1")
                         || serverCommands.equals("GET_PLAYER_STATUS@false@1")
@@ -185,6 +214,7 @@ public class ServerCalls extends Thread {
                     int identifier = Integer.valueOf(tmpValue[2]);
                     boolean status = Boolean.valueOf(tmpValue[1]);
                     gsc.getPlayers().get(identifier).setPlayerReady(status);
+
                 }
 
                 if (serverCommands.equals("GET_ANIMATION_STATUS@true") || serverCommands.equals("GET_ANIMATION_STATUS@false")) {
@@ -192,14 +222,15 @@ public class ServerCalls extends Thread {
                     String tmpString = value[1];
                     boolean tmpBool = Boolean.valueOf(tmpString);
                     gsc.setAnimationStatus(tmpBool);
+
                 }
-
             }
+            //}
 
-
-        } catch (IOException ioEx){
+        } catch (IOException ioEx) {
             ioEx.printStackTrace();
         }
-
     }
+
+    //}
 }

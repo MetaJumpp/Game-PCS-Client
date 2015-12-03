@@ -32,7 +32,7 @@ public class Button extends BasicGame {
         super(title);
         this.imgX = x;
         this.imgY = y;
-        isActive = false;
+        isActive = true;
 
         //Encapsulation of the indexNo used to access specific images in the images[] array
         if (picIndexNo >= 0 && picIndexNo <= images.length - 1) {
@@ -75,7 +75,7 @@ public class Button extends BasicGame {
         float mouseX = input.getMouseX();
         float mouseY = input.getMouseY();
 
-        if (mouseX > imgX && mouseX < imgX + images[picIndexNo].getWidth() && mouseY > imgY && mouseY < imgY + images[picIndexNo].getHeight() && input.isMousePressed(input.MOUSE_LEFT_BUTTON)) {
+        if (mouseX > imgX && mouseX < imgX + images[picIndexNo].getWidth() && mouseY > imgY && mouseY < imgY + images[picIndexNo].getHeight() && input.isMousePressed(input.MOUSE_LEFT_BUTTON) && isActive) {
             return true;
         } else {
             return false;

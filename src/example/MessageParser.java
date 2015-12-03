@@ -1,10 +1,15 @@
 package example;
 
-
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Message implements Serializable{
+/**
+ *
+ * Created by TMA on 03-12-2015.
+ */
+
+public class MessageParser {
+
+    Message instanceOfMessage;
 
     ArrayList<String> player1 = new ArrayList<String>();
     ArrayList<String> player2 = new ArrayList<String>();
@@ -37,9 +42,10 @@ public class Message implements Serializable{
     boolean gameLost;
 
 
-    Message()
+    MessageParser(Message instanceOfMessage)
     {
-
+        this.instanceOfMessage = instanceOfMessage;
+        initialInit();
     }
 
     //------------------------Getters----------------------------------------------
@@ -64,39 +70,6 @@ public class Message implements Serializable{
         return cities;
     }
 
-    public ArrayList<String> getPlayerDeck() {
-        return playerDeck;
-    }
-
-    public ArrayList<String> getPlayerDiscard() {
-        return playerDiscard;
-    }
-
-    public ArrayList<String> getInfectionDeck() {
-        return infectionDeck;
-    }
-
-    public ArrayList<String> getInfectionDiscard() {
-        return infectionDiscard;
-    }
-
-    public int getBlueCubesLeft() {
-        return blueCubesLeft;
-    }
-
-    public int getRedCubesLeft() {
-        return redCubesLeft;
-    }
-
-    public int getYellowCubesLeft() {
-        return yellowCubesLeft;
-    }
-
-    public int getBlackCubesLeft() {
-        return blackCubesLeft;
-    }
-
-    public int getResearchStationsLeft(){return researchStationsLeft;}
 
     public int getOutbreakMarker() {
         return outbreakMarker;
@@ -121,5 +94,64 @@ public class Message implements Serializable{
     public boolean isGameLost() {
         return gameLost;
     }
+
+    public void initialInit() {
+
+        player1.add("0");
+        player1.add("true");
+        player1.add("atlanta");
+        player1.add("atlanta");
+
+
+        player2.add("1");
+        player2.add("true");
+        player2.add("atlanta");
+        player1.add("atlanta");
+
+
+        player3.add("2");
+        player3.add("true");
+        player3.add("atlanta");
+        player3.add("atlanta");
+
+
+        player4.add("3");
+        player4.add("true");
+        player4.add("atlanta");
+        player4.add("atlanta");
+
+
+        for (int i = 0; i < cities[0].length; i++) {
+            cities[0][i] = "atlanta";
+            cities[1][i] = "false";
+            cities[2][i] = "0";
+            cities[3][i] = "0";
+            cities[4][i] = "0";
+            cities[5][i] = "0";
+        }
+
+    }
+
+    public void updateValues() {
+
+        if (instanceOfMessage.getPlayer1() != null) {
+            player1 = instanceOfMessage.getPlayer1();
+        }
+        if (instanceOfMessage.getPlayer2() != null) {
+            player2 = instanceOfMessage.getPlayer1();
+        }
+        if (instanceOfMessage.getPlayer3() != null) {
+            player3 = instanceOfMessage.getPlayer1();
+        }
+        if (instanceOfMessage.getPlayer4() != null) {
+            player1 = instanceOfMessage.getPlayer1();
+        }
+        if (instanceOfMessage.getCities() != null) {
+            cities = getCities();
+        }
+        outbreakMarker = instanceOfMessage.outbreakMarker;
+        infectionMarker = instanceOfMessage.infectionMarker;
+    }
+
 
 }

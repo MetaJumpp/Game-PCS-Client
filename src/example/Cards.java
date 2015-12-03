@@ -79,7 +79,6 @@ public class Cards extends BasicGame {
         float mouseY = input.getMouseY();
 
         if (mouseX > xPos && mouseX < xPos + cardImage.getWidth() && mouseY > yPos && mouseY < yPos + cardImage.getHeight() && input.isMousePressed(input.MOUSE_LEFT_BUTTON)) {
-            System.out.println("YEP");
             return true;
         } else {
             return false;

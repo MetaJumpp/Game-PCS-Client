@@ -7,6 +7,7 @@ import org.newdawn.slick.*;
  */
 public class ActionMenu extends BasicGame {
 
+    private MessageParser message;
     private Button move;
     private Button researchSt;
     private Button removeCube;
@@ -23,7 +24,9 @@ public class ActionMenu extends BasicGame {
     private boolean isShareActive;
     private boolean isEventCardActive;
     private boolean isCureActive;
+    private boolean discardPhase;
     private boolean endTurn;
+    private boolean isItYourTurn;
     int draw2Cards = 0;
 
     ServerCalls serverCalls;
@@ -77,7 +80,6 @@ public class ActionMenu extends BasicGame {
                 isEventCardActive = false;
                 drawCard.setActive(false);
             }
-
             if (researchSt.clickWithin(gc)) {
                 isResearchSActive = !isResearchSActive;
                 isMoveActive = false;
@@ -87,7 +89,6 @@ public class ActionMenu extends BasicGame {
                 isEventCardActive = false;
                 drawCard.setActive(false);
             }
-
             if (removeCube.clickWithin(gc)) {
                 isRemoveCubeActive = !isRemoveCubeActive;
                 isResearchSActive = false;
@@ -97,7 +98,6 @@ public class ActionMenu extends BasicGame {
                 isEventCardActive = false;
                 drawCard.setActive(false);
             }
-
             if (share.clickWithin(gc)) {
                 isShareActive = !isShareActive;
                 isMoveActive = false;
@@ -107,7 +107,6 @@ public class ActionMenu extends BasicGame {
                 isEventCardActive = false;
                 drawCard.setActive(false);
             }
-
             if (eventCard.clickWithin(gc)) {
                 isEventCardActive = !isEventCardActive;
                 isRemoveCubeActive = false;
@@ -117,7 +116,6 @@ public class ActionMenu extends BasicGame {
                 isShareActive = false;
                 drawCard.setActive(false);
             }
-
             if (cure.clickWithin(gc)) {
                 isCureActive = !isCureActive;
                 isMoveActive = false;
@@ -127,8 +125,9 @@ public class ActionMenu extends BasicGame {
                 isEventCardActive = false;
                 drawCard.setActive(false);
             }
+        }
 
-        } else if (playerOutTurns && !endTurn) {
+        if (playerOutTurns && !endTurn) {
             isMoveActive = false;
             move.setActive(false);
             isResearchSActive = false;
@@ -141,7 +140,8 @@ public class ActionMenu extends BasicGame {
             eventCard.setActive(false);
             isCureActive = false;
             cure.setActive(false);
-        } else {
+            drawCard.setActive(true);
+        } else if (endTurn){
             isMoveActive = false;
             move.setActive(false);
             isResearchSActive = false;
@@ -194,10 +194,6 @@ public class ActionMenu extends BasicGame {
         } else {
             cure.setPicIndexNo(11);
         }
-
-        drawCard(gc);
-
-
     }
 
     @Override
@@ -214,23 +210,24 @@ public class ActionMenu extends BasicGame {
             g.drawImage(notAvailable, 682 - notAvailable.getWidth() / 2, 384 - notAvailable.getHeight() / 2);
         }
 
-        if (playerOutTurns && !endTurn) {
+        if (playerOutTurns && !endTurn && !discardPhase) {
             drawCard.render(gc, g);
         }
 
     }
 
-    public void drawCard(GameContainer gc) {
+    public void drawCard() {
 
         //SEND TIL SERVER
         if (draw2Cards < 2) {
-            if (drawCard.clickWithin(gc) && playerOutTurns && !endTurn) {
                 serverCalls.drawCard();
                 System.out.println("CLIENT RULES, SERVER DROOLS!!!");
                 draw2Cards += 1;
-            }
-        } else if (draw2Cards == 2) {
-            endTurn = true;
+        }
+        if (draw2Cards == 2) {
+            discardPhase = true;
+            drawCard.setActive(false);
+            draw2Cards = 0;
         }
     }
 
@@ -286,14 +283,30 @@ public class ActionMenu extends BasicGame {
         this.isCureActive = isCureActive;
     }
 
-    public boolean getEndTurn() { return endTurn; }
+    public boolean getEndTurn() {
+        return endTurn;
+    }
 
-    public Button getDrawCardButton () {
+    public Button getDrawCardButton() {
         return drawCard;
     }
 
     public void setServerCalls(ServerCalls serverCalls) {
         this.serverCalls = serverCalls;
+    }
+
+    public void setEndTurn(boolean setEndTurn) { this.endTurn = setEndTurn; }
+
+    public boolean getDiscardPhase() {
+        return discardPhase;
+    }
+
+    public void setDiscardPhase(boolean discardPhase) {
+        this.discardPhase = discardPhase;
+    }
+
+    public void setMessage(MessageParser message) {
+        this.message = message;
     }
 }
 

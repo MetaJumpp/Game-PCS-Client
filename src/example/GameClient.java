@@ -1,6 +1,7 @@
 package example;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -19,10 +20,10 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class GameClient extends StateBasedGame {
 
-    private static final String HOST = "localhost";
-    //private static final String HOST = "192.168.1.100";
-    private static final int PORT = 1234;
-    //private static final int PORT = 2555;
+    //private static final String HOST = "localhost";
+    private static final String HOST = "192.168.1.100";
+    //private static final int PORT = 1234;
+    private static final int PORT = 2555;
     public static Socket socket;
     public static PrintWriter out;
 
@@ -49,14 +50,16 @@ public class GameClient extends StateBasedGame {
         players.add(new Player("3"));
         players.add(new Player("4"));
 
+        Message instanceOfMessage = new Message();
+        MessageParser message = new MessageParser(instanceOfMessage);
         GameStateCommons gsc = new GameStateCommons(players);
-        ServerCalls serverCalls = new ServerCalls(gsc);
+        ServerCalls serverCalls = new ServerCalls(gsc, message);
         serverCalls.start();
 
 
-        //this.addState(new InputNameScreen(gsc));
-        //this.addState(new Lobby(gsc, serverCalls,players));
-        this.addState(new GameBoard(gsc, serverCalls, players));
+        this.addState(new InputNameScreen(gsc));
+        this.addState(new Lobby(gsc, serverCalls,players));
+        this.addState(new GameBoard(gsc, serverCalls, players, message));
 
     }
 

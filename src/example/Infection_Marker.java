@@ -7,7 +7,7 @@ import org.newdawn.slick.*;
  */
 public class Infection_Marker extends BasicGame {
 
-    Message message;
+    MessageParser message;
     private int count;
     private int xPos = 795;
     private int yPos = 670;
@@ -38,7 +38,7 @@ public class Infection_Marker extends BasicGame {
         graphics.drawImage(ratemarker,xPos,yPos);
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(MessageParser message) {
         this.message = message;
     }
 }
