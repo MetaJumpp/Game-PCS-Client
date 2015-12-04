@@ -207,7 +207,7 @@ public class GameBoard extends BasicGameState {
 
         isItMyTurn(playerNo);
 
-        message.updateValues();
+        //message.updateValues();
 
 
         updateLibrary();

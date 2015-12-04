@@ -14,9 +14,14 @@ public class ServerCalls extends Thread {
 
     GameStateCommons gsc;
     MessageParser message;
+    String serverCommands;
+
+    Message messageClass;
+
     private static Socket socket = GameClient.socket;
     private static PrintWriter out = GameClient.out;
-    //public static ObjectInputStream objectInputStream;
+    //public BufferedReader in;
+    public static ObjectInputStream in;
 
 
     public ServerCalls(GameStateCommons gsc, MessageParser message) {
@@ -57,6 +62,7 @@ public class ServerCalls extends Thread {
         curPlayStatus = playerList.get(playerIdNo).getPlayerReady();
         out.println("SET_PLAYER_STATUS@" + curPlayStatus + "@" + playerIdNo);
         System.out.println(out);
+        System.out.println("Ready button pressed");
         out.flush();
     }
 
@@ -129,42 +135,36 @@ public class ServerCalls extends Thread {
 
     public void run() {
 
+        /** In Lobby State **/
         try {
-            boolean running = true;
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            //objectInputStream = new ObjectInputStream(socket.getInputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {e.printStackTrace();System.out.println("failed to make object input stream");}
 
-            while (running) {
+        while (true)
+        {
 
+            try {
+                    serverCommands = (String) in.readObject();
 
-                String serverCommands;
-                serverCommands = in.readLine();
-
-                /*
-                try {
-                    Message messageClass = (Message) objectInputStream.readObject();
-                } catch (ClassNotFoundException clNF) {
-                    clNF.printStackTrace();
-                }*/
-
-                if (serverCommands.equals("quit")) {
-                    running = false;
-                    System.out.println("QUITTER");
-                }
-
-                //while (lobby) {
-
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("failed to read message from server in the lobby");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            if(true)
+            //if(gsc.getLobbyState())
+            {
+                //System.out.println("in lobby");
 
                 if (serverCommands.equals("GET_PLAYER_ID@0")
                         || serverCommands.equals("GET_PLAYER_ID@1")
                         || serverCommands.equals("GET_PLAYER_ID@2")
                         || serverCommands.equals("GET_PLAYER_ID@3")) {
-
                     String[] value = serverCommands.split("@");
                     int tmpInt = Integer.valueOf(value[1]);
                     gsc.setPlayerNo(tmpInt);
                 }
-
                 if (serverCommands.equals("GET_PLAYER_ROLE@0@0")
                         || serverCommands.equals("GET_PLAYER_ROLE@0@1")
                         || serverCommands.equals("GET_PLAYER_ROLE@0@2")
@@ -172,35 +172,29 @@ public class ServerCalls extends Thread {
                         || serverCommands.equals("GET_PLAYER_ROLE@0@4")
                         || serverCommands.equals("GET_PLAYER_ROLE@0@5")
                         || serverCommands.equals("GET_PLAYER_ROLE@0@6")
-
                         || serverCommands.equals("GET_PLAYER_ROLE@1@1")
                         || serverCommands.equals("GET_PLAYER_ROLE@1@2")
                         || serverCommands.equals("GET_PLAYER_ROLE@1@3")
                         || serverCommands.equals("GET_PLAYER_ROLE@1@4")
                         || serverCommands.equals("GET_PLAYER_ROLE@1@5")
                         || serverCommands.equals("GET_PLAYER_ROLE@1@6")
-
                         || serverCommands.equals("GET_PLAYER_ROLE@2@1")
                         || serverCommands.equals("GET_PLAYER_ROLE@2@2")
                         || serverCommands.equals("GET_PLAYER_ROLE@2@3")
                         || serverCommands.equals("GET_PLAYER_ROLE@2@4")
                         || serverCommands.equals("GET_PLAYER_ROLE@2@5")
                         || serverCommands.equals("GET_PLAYER_ROLE@2@6")
-
                         || serverCommands.equals("GET_PLAYER_ROLE@3@1")
                         || serverCommands.equals("GET_PLAYER_ROLE@3@2")
                         || serverCommands.equals("GET_PLAYER_ROLE@3@3")
                         || serverCommands.equals("GET_PLAYER_ROLE@3@4")
                         || serverCommands.equals("GET_PLAYER_ROLE@3@5")
                         || serverCommands.equals("GET_PLAYER_ROLE@3@6")) {
-
                     String[] value = serverCommands.split("@");
                     int playerNo = Integer.valueOf(value[1]);
                     int roleNo = Integer.valueOf(value[2]);
                     gsc.getPlayers().get(playerNo).getRole().setIndexNo(roleNo);
                 }
-
-
                 if (serverCommands.equals("GET_PLAYER_STATUS@true@0")
                         || serverCommands.equals("GET_PLAYER_STATUS@false@0")
                         || serverCommands.equals("GET_PLAYER_STATUS@true@1")
@@ -209,28 +203,36 @@ public class ServerCalls extends Thread {
                         || serverCommands.equals("GET_PLAYER_STATUS@false@2")
                         || serverCommands.equals("GET_PLAYER_STATUS@true@3")
                         || serverCommands.equals("GET_PLAYER_STATUS@false@3")) {
-
                     String[] tmpValue = serverCommands.split("@");
                     int identifier = Integer.valueOf(tmpValue[2]);
                     boolean status = Boolean.valueOf(tmpValue[1]);
                     gsc.getPlayers().get(identifier).setPlayerReady(status);
-
                 }
-
-                if (serverCommands.equals("GET_ANIMATION_STATUS@true") || serverCommands.equals("GET_ANIMATION_STATUS@false")) {
+                if (serverCommands.equals("GET_ANIMATION_STATUS@true") /*|| serverCommands.equals("GET_ANIMATION_STATUS@false")*/) {
                     String[] value = serverCommands.split("@");
                     String tmpString = value[1];
                     boolean tmpBool = Boolean.valueOf(tmpString);
                     gsc.setAnimationStatus(tmpBool);
-
+                    gsc.setLobbyState();
+                    System.out.println("Animation value is " + gsc.isAnimationStatus());
                 }
             }
-            //}
-
-        } catch (IOException ioEx) {
-            ioEx.printStackTrace();
+            //else if(!gsc.getLobbyState())
+            if(false)
+            {
+                System.out.println("Now entering Game phase");
+                /** In game state **/
+                try
+                {
+                    messageClass = (Message) in.readObject();
+                    message.updateValues(messageClass);
+                    System.out.println("Message is received");
+                }
+                catch (IOException e) {e.printStackTrace();System.out.println("Could not create object input stream");}
+                catch (ClassNotFoundException e) {e.printStackTrace();System.out.println("Could not find Message class");}
+            }
         }
+
     }
 
-    //}
 }

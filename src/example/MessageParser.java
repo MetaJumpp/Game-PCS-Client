@@ -132,28 +132,29 @@ public class MessageParser {
 
     }
 
-    public void updateValues() {
+    public void updateValues(Message newMessage) {
 
         try {
-            if (instanceOfMessage.getPlayer1() != null && !instanceOfMessage.getPlayer1().isEmpty()) {
-                player1 = instanceOfMessage.getPlayer1();
+            if (newMessage.getPlayer1() != null && !newMessage.getPlayer1().isEmpty()) {
+                player1 = newMessage.getPlayer1();
             }
-            if (instanceOfMessage.getPlayer2() != null && !instanceOfMessage.getPlayer2().isEmpty()) {
-                player2 = instanceOfMessage.getPlayer1();
+            if (newMessage.getPlayer2() != null && !newMessage.getPlayer2().isEmpty()) {
+                player2 = newMessage.getPlayer1();
             }
-            if (instanceOfMessage.getPlayer3() != null && !instanceOfMessage.getPlayer3().isEmpty()) {
-                player3 = instanceOfMessage.getPlayer1();
+            if (newMessage.getPlayer3() != null && !newMessage.getPlayer3().isEmpty()) {
+                player3 = newMessage.getPlayer1();
             }
-            if (instanceOfMessage.getPlayer4() != null && !instanceOfMessage.getPlayer3().isEmpty()) {
-                player1 = instanceOfMessage.getPlayer1();
+            if (newMessage.getPlayer4() != null && !newMessage.getPlayer3().isEmpty()) {
+                player1 = newMessage.getPlayer1();
             }
-            if (instanceOfMessage.getCities() != null && !instanceOfMessage.getPlayer1().isEmpty()) {
-                cities = getCities();
+            if (newMessage.getCities() != null && !newMessage.getPlayer1().isEmpty()) {
+                cities = newMessage.getCities();
             }
-            if (instanceOfMessage.getCities() != null && instanceOfMessage.getCities().length>0)
-            outbreakMarker = instanceOfMessage.outbreakMarker;
-            infectionMarker = instanceOfMessage.infectionMarker;
-        } catch (NullPointerException nox) {
+            if (newMessage.getCities() != null && newMessage.getCities().length>0)
+            outbreakMarker = newMessage.outbreakMarker;
+            infectionMarker = newMessage.infectionMarker;
+        }
+        catch (NullPointerException nox) {
             nox.printStackTrace();
         }
     }

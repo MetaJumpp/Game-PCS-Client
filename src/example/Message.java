@@ -121,5 +121,4 @@ public class Message implements Serializable{
     public boolean isGameLost() {
         return gameLost;
     }
-
 }

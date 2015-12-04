@@ -11,11 +11,13 @@ public class GameStateCommons {
     private List<Player> players;
     private int playerNo;
     private boolean animationStatus;
+    boolean lobbyState;
 
     public GameStateCommons(List<Player> players) {
 
         playerNo = 1;
         this.players = players;
+        lobbyState = true;
 
     }
 
@@ -37,6 +39,13 @@ public class GameStateCommons {
 
     public void setAnimationStatus(boolean animationStatus) {
         this.animationStatus = animationStatus;
+    }
+
+    public boolean getLobbyState(){return lobbyState;}
+
+    public void setLobbyState()
+    {
+        lobbyState = false;
     }
 
 }
